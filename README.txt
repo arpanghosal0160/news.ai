@@ -9,7 +9,7 @@ Text-to-Speech: Reads the summarized news articles aloud using pyttsx3.
 Installation
 Clone or Download the Repository:
 
-Clone the repository from your terminal using git clone https://github.com/yourusername/news-summarizer.git
+Clone the repository from your terminal using git clone https://github.com/arpanghosal0160/news.ai
 Alternatively, download the project files and navigate to the directory using cd news-summarizer.
 Create a Virtual Environment (Optional but Recommended):
 
