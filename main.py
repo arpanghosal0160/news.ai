@@ -2,6 +2,8 @@ import speech_recognition as sr
 from news_fetcher import fetch_news
 from summarizer import summarize_text
 from text_to_speech import read_aloud
+from news_fetcher import fetch_news
+from summarizer import summarize_text
 
 def recognize_voice():
     """
@@ -24,6 +26,16 @@ def recognize_voice():
             read_aloud("Check your internet connection and try again.")
             print("Could not request results; check your internet connection.")
         return None
+
+def handle_query(query):
+    articles = fetch_news(query)
+    if not articles:
+        return "No news articles found for your query."
+
+    # Summarize the first article
+    article = articles[0]
+    return summarize_text(article['content'])
+
 
 def main():
     # Welcome the user
