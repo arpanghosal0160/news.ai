@@ -1,6 +1,6 @@
 import requests
 
-API_KEY = "efdc6ebf45f57603a52a1e30953bcdba"  # Replace with your GNews API key
+API_KEY = "efdc6ebf45f57603a52a1e30953bcdba"  #GNews API key
 
 def fetch_news(query="Technology", max_results=5):
     """
