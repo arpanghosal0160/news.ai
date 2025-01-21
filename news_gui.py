@@ -1,13 +1,17 @@
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import scrolledtext
+from tkinter import messagebox, scrolledtext
 from main import handle_query
 import pyttsx3
+import threading
 
 # Initialize text-to-speech engine
 engine = pyttsx3.init()
 
-def on_submit():
+def speak_welcome():
+    engine.say("Welcome to the News Summarizer! Please enter a topic to get started.")
+    engine.runAndWait()
+
+def fetch_and_summarize():
     # Get the query from the user input
     query = query_input.get()
     if not query.strip():
@@ -15,23 +19,34 @@ def on_submit():
         return
 
     try:
-        # Fetch and summarize news
+        # Update status
         output_text.delete(1.0, tk.END)
         output_text.insert(tk.END, "Fetching news...\n")
+        result_label.config(text="Fetching news, please wait...")
+
+        # Fetch and summarize news
         summary = handle_query(query)
         output_text.insert(tk.END, f"\nSummary:\n{summary}")
-        
+        result_label.config(text="Summarization complete!")
+
         # Read summary aloud
         engine.say(summary)
         engine.runAndWait()
     except Exception as e:
         output_text.insert(tk.END, f"\nError: {str(e)}")
         messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        result_label.config(text="An error occurred!")
+
+def on_submit():
+    # Run summarization in a separate thread to avoid freezing the GUI
+    thread = threading.Thread(target=fetch_and_summarize)
+    thread.start()
 
 # Function to clear input and output
 def clear_text():
     query_input.delete(0, tk.END)
     output_text.delete(1.0, tk.END)
+    result_label.config(text="")
 
 # GUI setup
 app = tk.Tk()
@@ -87,12 +102,19 @@ output_label.pack(anchor="w", padx=5, pady=5)
 output_text = scrolledtext.ScrolledText(main_frame, wrap="word", font=("Helvetica", 12), height=15, width=70)
 output_text.pack(pady=5, padx=5)
 
+# Status Label
+result_label = tk.Label(main_frame, text="", font=("Helvetica", 10), bg=bg_color, fg="#666666")
+result_label.pack(pady=5)
+
 # Footer
 footer_label = tk.Label(
     app, text="Created by [Your Name] | Powered by GNews API & Hugging Face",
     font=("Helvetica", 10), bg="#f2f2f2", fg="#666666"
 )
 footer_label.pack(side="bottom", pady=10)
+
+# Speak welcome message
+threading.Thread(target=speak_welcome).start()
 
 # Run the app
 app.mainloop()
